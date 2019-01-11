@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssm.mapper.ClientInfoMapper">
+    <resultMap id="withBankCardResultMap" type="clientInfo">
+        <id property="clientId" column="client_id"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="birthday" column="birthday"/>
+        <result property="idCard" column="id_card"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <collection property="bankCardInfo" ofType="bankCardInfo">
+            <id property="bankId" column="bank_id"/>
+            <result property="cardNumber" column="card_number"/>
+            <result property="cardDate" column="card_date"/>
+            <result property="balance" column="balance"/>
+        </collection>
+    </resultMap>
+    <!--详情-->
+    <select id="details" parameterType="int" resultMap="withBankCardResultMap">
+        SELECT * FROM bankcardinfo,clientinfo WHERE client_id=#{id}
+    </select>
+
+    <!--查询全部顾客-->
+    <select id="getAll" resultType="clientInfo">
+        SELECT * FROM clientinfo
+    </select>
+
+    <!--根据手机号 姓名 身份证号组合查询客户-->
+    <select id="getClientInfoByPhoneAndNameAndIdCard" parameterType="clientInfo" resultType="clientInfo">
+        SELECT * FROM clientinfo
+        <where>
+            <if test=" phoneNumber!=null and phoneNumber!='' ">
+                and phone_number=#{phone}
+            </if>
+
+            <if test=" name!=null and name!='' ">
+                and name=#{name}
+            </if>
+            <if test="idCard!=null and idCard!=''">
+                and id_card=#{idCard}
+            </if>
+        </where>
+    </select>
+
+</mapper>
